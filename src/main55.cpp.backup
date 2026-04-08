@@ -1,0 +1,180 @@
+#include "Arduino.h"
+#include "Motor.h"
+#include "config.h"
+#include "Holding.h"
+#include "Kinematics.h"
+#include <ESP32Encoder.h>
+#include "PID.h"
+#include <PS4Controller.h>
+
+ESP32Encoder EncoderFL;
+ESP32Encoder EncoderFR;
+ESP32Encoder EncoderRL;
+ESP32Encoder EncoderRR;
+
+Motor MotorFL(MotorPinFL_A, MotorPinFL_B, MAX_RPM, &EncoderFL, COUNT_PER_REV_FL);
+Motor MotorFR(MotorPinFR_A, MotorPinFR_B, MAX_RPM, &EncoderFR, COUNT_PER_REV_FR);
+Motor MotorRL(MotorPinRL_A, MotorPinRL_B, MAX_RPM, &EncoderRL, COUNT_PER_REV_RL);
+Motor MotorRR(MotorPinRR_A, MotorPinRR_B, MAX_RPM, &EncoderRR, COUNT_PER_REV_RR);
+
+Kinematics kinematics(Kinematics::MECANUM, MAX_RPM, WHEEL_DIAMETER, 0, LR_WHEELS_DISTANCE);
+
+PID MotorFL_Pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
+PID MotorFR_Pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
+PID MotorRL_Pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
+PID MotorRR_Pid(PWM_MIN, PWM_MAX, K_P, K_I, K_D);
+
+#define COMMAND_RATE 50
+
+bool move_Reverse = false;
+
+int LStickX, LStickY, RStickX, RStickY;
+
+unsigned long g_prev_command_time = 0;
+unsigned long prev_control_time = 0;
+float g_req_linear_vel_x = 0;
+float g_req_linear_vel_y = 0;
+float g_req_angular_vel_z = 0;
+
+const int LStickX_Calib = 40;
+const int LStickY_Calib = 20;
+const int RStickX_Calib = 20;
+const int RStickY_Calib = 20;
+
+Holding Holding;
+
+void moveBase()
+{
+  Kinematics::rpm req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
+
+  int current_rpm1 = MotorFL.getRPM();
+  int current_rpm2 = MotorFR.getRPM();
+  int current_rpm3 = MotorRL.getRPM();
+  int current_rpm4 = MotorRR.getRPM();
+
+  MotorFL.run(MotorFL_Pid.compute(req_rpm.motor1, current_rpm1));
+  MotorFR.run(MotorFR_Pid.compute(req_rpm.motor2, current_rpm2));
+  MotorRL.run(MotorRL_Pid.compute(req_rpm.motor3, current_rpm3));
+  MotorRR.run(MotorRR_Pid.compute(req_rpm.motor4, current_rpm4));
+}
+
+void digital_stick()
+{
+  if (PS4.L2Value() >= 65)
+  {
+    Holding.toggleState_Holding_Relay_Slider();
+  }
+  if (PS4.R2Value() >= 65)
+  {
+    Holding.toggleState_Holding_Relay_Lift();
+  }
+  if (PS4.L1())
+  {
+    Holding.toggleState_Holding_Relay_Motor();
+  }
+  if (PS4.R1())
+  {
+    // Double HOLD
+    Holding.toggleState_Holding_Relay_Dual_Creeper();
+  }
+  if (PS4.Options())
+  {
+    vTaskDelay(400);
+    move_Reverse = !move_Reverse;
+  }
+  if (PS4.Cross())
+  {
+    Holding.toggleState_Holding_Relay_SHOOT();
+  }
+  if (PS4.Circle())
+  {
+    Holding.toggleState_Holding_Relay_Creeper_1();
+  }
+  if (PS4.Triangle())
+  {
+    Holding.toggleState_Holding_Relay_Creeper_2();
+  }
+  // if (PS4.Circle())
+  // {
+  //   Holding.toggleState_Holding_Relay_Motor();
+  // }
+}
+
+void analog_stick()
+{
+
+  LStickX = PS4.LStickX();
+  LStickY = PS4.LStickY();
+  RStickX = PS4.RStickX();
+  RStickY = PS4.RStickY();
+
+  if (move_Reverse)
+  {
+    if (abs(LStickX) >= LStickX_Calib || abs(LStickY) >= LStickY_Calib || abs(RStickX) >= RStickX_Calib || abs(RStickY) >= RStickY_Calib)
+    {
+      g_req_linear_vel_x = map(LStickY, 127, -128, -MAX_RPM, MAX_RPM);
+      g_req_linear_vel_y = map(RStickX, -128, 127, -MAX_RPM, MAX_RPM);
+      g_req_angular_vel_z = map(LStickX, 127, -128, -MAX_RPM, MAX_RPM);
+      // g_req_angular_vel_z = g_req_angular_vel_z * 2;
+    }
+    else
+    {
+      g_req_linear_vel_x = 0;
+      g_req_linear_vel_y = 0;
+      g_req_angular_vel_z = 0;
+    }
+    // Serial.println("Reverse!");
+  }
+  else
+  {
+    if (abs(LStickX) >= LStickX_Calib || abs(LStickY) >= LStickY_Calib || abs(RStickX) >= RStickX_Calib || abs(RStickY) >= RStickY_Calib)
+    {
+      g_req_linear_vel_x = map(LStickY, -128, 127, -MAX_RPM, MAX_RPM);
+      g_req_linear_vel_y = map(RStickX, 127, -128, -MAX_RPM, MAX_RPM);
+      g_req_angular_vel_z = map(LStickX, 127, -128, -MAX_RPM, MAX_RPM);
+      g_req_angular_vel_z = g_req_angular_vel_z * 1.85;
+    }
+    else
+    {
+      g_req_linear_vel_x = 0;
+      g_req_linear_vel_y = 0;
+      g_req_angular_vel_z = 0;
+    }
+    // Serial.println("Normal!");
+  }
+}
+
+void setup()
+{
+  setCpuFrequencyMhz(240);
+  // Serial.begin(115200);
+  PS4.begin("a8:42:e3:ae:98:02");
+  // Serial.println("Ready.");
+  EncoderFL.attachSingleEdge(EncoderPinFL_A, EncoderPinFL_B);
+  EncoderFR.attachSingleEdge(EncoderPinFR_A, EncoderPinFR_B);
+  EncoderRL.attachSingleEdge(EncoderPinRL_A, EncoderPinRL_B);
+  EncoderRR.attachSingleEdge(EncoderPinRR_A, EncoderPinRR_B);
+  Holding.init();
+}
+
+void loop()
+{
+  if (PS4.isConnected())
+  {
+    analog_stick();
+    digital_stick();
+  }
+  else
+  {
+    g_req_linear_vel_x = 0;
+    g_req_linear_vel_y = 0;
+    g_req_angular_vel_z = 0;
+  }
+
+  unsigned long now = millis();
+  if ((now - prev_control_time) >= (1000 / COMMAND_RATE))
+  {
+    moveBase();
+    prev_control_time = now;
+  }
+}
