@@ -75,7 +75,7 @@ void update_control() {
   }
 
   // --- 1. จัดการโหมดความเร็ว (Share Button) ---
-  if (PS4.Share()) {
+  if (PS4.Options()) {
     speed_mode = (speed_mode + 1) % 2;
     SPEED_SCALE_FACTOR = (speed_mode == 0) ? 0.5 : 0.2; // ปกติ 50%, ช้า 20%
     delay(300);
