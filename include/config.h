@@ -10,18 +10,12 @@
 #define MotorPinRR_A 23
 #define MotorPinRR_B 19
 
-
-
-// นิ่ม
-#define MAX_RPM 30  // ลดจาก 300 เพื่อไม่ให้วิ่งแรงเกินไป
-// #define MAX_RPM 300
+#define MAX_RPM 200
 
 // #define K_P 1.5  // P constant
 // #define K_I 0.25 // I constant
 // #define K_D 0.4  // D constant
 
-// ซิ่ง
-// #define MAX_RPM 50000
 #define K_P 0.8  // ลด P constant สำหรับระบบที่ไม่มี encoder feedback
 #define K_I 0.3  // ลด I constant
 #define K_D 0.02 // ลด D constant
