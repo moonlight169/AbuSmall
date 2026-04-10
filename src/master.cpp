@@ -5,6 +5,8 @@
 #include "Kinematics.h"
 #include <PS4Controller.h>
 
+//d4:e9:f4:e2:1c:c8
+
 Motor MotorFL(MotorPinFL_A, MotorPinFL_B, MAX_RPM);
 Motor MotorFR(MotorPinFR_A, MotorPinFR_B, MAX_RPM);
 Motor MotorRL(MotorPinRL_A, MotorPinRL_B, MAX_RPM);
@@ -131,7 +133,7 @@ void update_control() {
 void setup() {
   Serial.begin(115200);
   setCpuFrequencyMhz(240);
-  PS4.begin("d0:ef:76:ed:f9:7c");
+  PS4.begin("d4:e9:f4:e2:1c:c8");
   Holding.init();
 }
 
