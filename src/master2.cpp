@@ -3,6 +3,8 @@
 #include "config.h"
 #include "Holding.h"
 #include "Kinematics.h"
+#include <ESP32Encoder.h>
+#include "PID.h"
 #include <PS4Controller.h>
 #include <Wire.h>
 
@@ -14,10 +16,15 @@
 
 //d4:e9:f4:e2:1c:c8
 
-Motor MotorFL(MotorPinFL_A, MotorPinFL_B, M2_MAX_RPM);
-Motor MotorFR(MotorPinFR_A, MotorPinFR_B, M2_MAX_RPM);
-Motor MotorRL(MotorPinRL_A, MotorPinRL_B, M2_MAX_RPM);
-Motor MotorRR(MotorPinRR_A, MotorPinRR_B, M2_MAX_RPM);
+ESP32Encoder EncoderFL;
+ESP32Encoder EncoderFR;
+ESP32Encoder EncoderRL;
+ESP32Encoder EncoderRR;
+
+Motor MotorFL(MotorPinFLM2_A, MotorPinFLM2_B, M2_MAX_RPM, &EncoderFL, COUNT_PER_REV_FL);
+Motor MotorFR(MotorPinFRM2_A, MotorPinFRM2_B, M2_MAX_RPM, &EncoderFR, COUNT_PER_REV_FR);
+Motor MotorRL(MotorPinRLM2_A, MotorPinRLM2_B, M2_MAX_RPM, &EncoderRL, COUNT_PER_REV_RL);
+Motor MotorRR(MotorPinRRM2_A, MotorPinRRM2_B, M2_MAX_RPM, &EncoderRR, COUNT_PER_REV_RR);
 
 Kinematics kinematics(Kinematics::MECANUM, M2_MAX_RPM, WHEEL_DIAMETER_M2, FR_WHEELS_DISTANCE_M2, LR_WHEELS_DISTANCE_M2);
 
@@ -203,9 +210,13 @@ void digital_control(){
 void setup() {
   Serial.begin(115200);
   setCpuFrequencyMhz(240);
-  PS4.begin("d4:e9:f4:e2:1c:c8");
+  PS4.begin("c8:2e:18:f8:59:84");
   Wire.begin(SDA_PIN, SCL_PIN);
   Holding.init();
+  EncoderFL.attachSingleEdge(EncoderPinFL_A, EncoderPinFL_B);
+  EncoderFR.attachSingleEdge(EncoderPinFR_A, EncoderPinFR_B);
+  EncoderRL.attachSingleEdge(EncoderPinRL_A, EncoderPinRL_B);
+  EncoderRR.attachSingleEdge(EncoderPinRR_A, EncoderPinRR_B);
 }
 
 void loop() {
@@ -216,5 +227,12 @@ void loop() {
   if ((now - prev_control_time) >= (1000 / COMMAND_RATE)) {
     moveBase();
     prev_control_time = now;
+
+    // --- เพิ่มส่วนนี้เพื่อ Debug ค่า Encoder ---
+    Serial.print("FL: "); Serial.print(EncoderFL.getCount());
+    Serial.print(" | FR: "); Serial.print(EncoderFR.getCount());
+    Serial.print(" | RL: "); Serial.print(EncoderRL.getCount());
+    Serial.print(" | RR: "); Serial.println(EncoderRR.getCount());
+    // ---------------------------------------
   }
 }

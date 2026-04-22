@@ -1,40 +1,46 @@
 //master
-#define MotorPinFL_A 17
-#define MotorPinFL_B 18
+#define MotorPinFLM1_A 17
+#define MotorPinFLM1_B 18
 
-#define MotorPinFR_A 16
-#define MotorPinFR_B 4
+#define MotorPinFRM1_A 16
+#define MotorPinFRM1_B 4
 
-#define MotorPinRL_A 33
-#define MotorPinRL_B 32
+#define MotorPinRLM1_A 33
+#define MotorPinRLM1_B 32
 
-#define MotorPinRR_A 23
-#define MotorPinRR_B 19
+#define MotorPinRRM1_A 23
+#define MotorPinRRM1_B 19
 
 //master2
-#define MotorPinFL_A 23
-#define MotorPinFL_B 19
+#define MotorPinFLM2_A 23
+#define MotorPinFLM2_B 19
 
-#define MotorPinFR_A 16
-#define MotorPinFR_B 4
+#define MotorPinFRM2_A 16
+#define MotorPinFRM2_B 4
 
-#define MotorPinRL_A 17
-#define MotorPinRL_B 18
+#define MotorPinRLM2_A 17
+#define MotorPinRLM2_B 18
 
-#define MotorPinRR_A 33
-#define MotorPinRR_B 32
+#define MotorPinRRM2_A 33
+#define MotorPinRRM2_B 32
 
-// #define MotorPinFL_A 17
-// #define MotorPinFL_B 18
+#define EncoderPinFL_A 36
+#define EncoderPinFL_B 39
 
-// #define MotorPinFR_A 16
-// #define MotorPinFR_B 4
+#define EncoderPinFR_A 35
+#define EncoderPinFR_B 34
 
-// #define MotorPinRL_A 33
-// #define MotorPinRL_B 32
+#define EncoderPinRL_A 25
+#define EncoderPinRL_B 26
 
-// #define MotorPinRR_A 23
-// #define MotorPinRR_B 19
+#define EncoderPinRR_A 13
+#define EncoderPinRR_B 27
+
+#define COUNT_PER_REV_FL 6410
+#define COUNT_PER_REV_RL 6410
+
+#define COUNT_PER_REV_FR 6410
+#define COUNT_PER_REV_RR 6410
 
 //slave1
 #define MotorPinS1FL_A 17

@@ -7,10 +7,10 @@
 
 //d4:e9:f4:e2:1c:c8
 
-Motor MotorFL(MotorPinFL_A, MotorPinFL_B, MAX_RPM);
-Motor MotorFR(MotorPinFR_A, MotorPinFR_B, MAX_RPM);
-Motor MotorRL(MotorPinRL_A, MotorPinRL_B, MAX_RPM);
-Motor MotorRR(MotorPinRR_A, MotorPinRR_B, MAX_RPM);
+Motor MotorFL(MotorPinFLM1_A, MotorPinFL_B, MAX_RPM);
+Motor MotorFR(MotorPinFRM1_A, MotorPinFR_B, MAX_RPM);
+Motor MotorRL(MotorPinRLM1_A, MotorPinRL_B, MAX_RPM);
+Motor MotorRR(MotorPinRRM1_A, MotorPinRR_B, MAX_RPM);
 
 Kinematics kinematics(Kinematics::MECANUM, MAX_RPM, WHEEL_DIAMETER, FR_WHEELS_DISTANCE, LR_WHEELS_DISTANCE);
 
