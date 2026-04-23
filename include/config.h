@@ -11,30 +11,35 @@
 #define MotorPinRRM1_A 23
 #define MotorPinRRM1_B 19
 
+#define LimitM1_SW_UP 5
+#define LimitM1_SW_DOWN 4
+#define MotorPinLift_M1_A 27
+#define MotorPinLift_M1_B 14
+
 //master2
-#define MotorPinFLM2_A 23
-#define MotorPinFLM2_B 19
+#define MotorPinFLM2_A 16
+#define MotorPinFLM2_B 4
 
-#define MotorPinFRM2_A 16
-#define MotorPinFRM2_B 4
+#define MotorPinFRM2_A 17
+#define MotorPinFRM2_B 18
 
-#define MotorPinRLM2_A 17
-#define MotorPinRLM2_B 18
+#define MotorPinRLM2_A 23
+#define MotorPinRLM2_B 19
 
 #define MotorPinRRM2_A 33
 #define MotorPinRRM2_B 32
 
-#define EncoderPinFL_A 36
-#define EncoderPinFL_B 39
+#define EncoderPinFL_A 13
+#define EncoderPinFL_B 27
 
-#define EncoderPinFR_A 35
-#define EncoderPinFR_B 34
+#define EncoderPinFR_A 25
+#define EncoderPinFR_B 26
 
-#define EncoderPinRL_A 25
-#define EncoderPinRL_B 26
+#define EncoderPinRL_A 34
+#define EncoderPinRL_B 35
 
-#define EncoderPinRR_A 13
-#define EncoderPinRR_B 27
+#define EncoderPinRR_A 39
+#define EncoderPinRR_B 36
 
 #define COUNT_PER_REV_FL 6410
 #define COUNT_PER_REV_RL 6410
