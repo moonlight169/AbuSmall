@@ -1,29 +1,24 @@
-//This file have Encoder
-#ifndef MOTOR_H
-#define MOTOR_H
+//This file don't have Encoder
+#ifndef Motor_h
+#define Motor_h
 
-#include <Arduino.h>
-#include <ESP32Encoder.h>
-
-class Motor {
+#include "Arduino.h"
+class Motor
+{
 private:
-    int _pinA, _pinB, _maxRPM, _speed;
-    ESP32Encoder *_en; 
-    int _counts_per_rev;   
-    float _rpm;      
-    unsigned long prev_update_time_; 
-    long prev_encoder_ticks_;  
+    int _pinA;
+    int _pinB;
+    int _speed = 0;
+    int _maxRPM = 0;
 
 public:
-    Motor(int pinA, int pinB, int maxRPM, ESP32Encoder *en, int counts_per_rev);
-    ~Motor();
-
-    void runRPM(int rpm);
-    void run(int speed);
-    void run();
+    Motor(int pinA, int pinB, int maxRPM);
     void setSpeed(int speed);
     int getSpeed();
+    void run(int speed);
+    void runRPM(int rpm);
+    void run();
     int getRPM();
+    ~Motor();
 };
-
 #endif

@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#include "Motor.h"
+#include "Motor_encoder.h"
 #include "config.h"
 #include "Holding.h"
 #include "Kinematics.h"
@@ -21,10 +21,10 @@ ESP32Encoder EncoderFR;
 ESP32Encoder EncoderRL;
 ESP32Encoder EncoderRR;
 
-Motor MotorFL(MotorPinFLM2_A, MotorPinFLM2_B, M2_MAX_RPM, &EncoderFL, COUNT_PER_REV_FL);
-Motor MotorFR(MotorPinFRM2_A, MotorPinFRM2_B, M2_MAX_RPM, &EncoderFR, COUNT_PER_REV_FR);
-Motor MotorRL(MotorPinRLM2_A, MotorPinRLM2_B, M2_MAX_RPM, &EncoderRL, COUNT_PER_REV_RL);
-Motor MotorRR(MotorPinRRM2_A, MotorPinRRM2_B, M2_MAX_RPM, &EncoderRR, COUNT_PER_REV_RR);
+Motor_encoder MotorFL(MotorPinFLM2_A, MotorPinFLM2_B, M2_MAX_RPM, &EncoderFL, COUNT_PER_REV_FL);
+Motor_encoder MotorFR(MotorPinFRM2_A, MotorPinFRM2_B, M2_MAX_RPM, &EncoderFR, COUNT_PER_REV_FR);
+Motor_encoder MotorRL(MotorPinRLM2_A, MotorPinRLM2_B, M2_MAX_RPM, &EncoderRL, COUNT_PER_REV_RL);
+Motor_encoder MotorRR(MotorPinRRM2_A, MotorPinRRM2_B, M2_MAX_RPM, &EncoderRR, COUNT_PER_REV_RR);
 
 Kinematics kinematics(Kinematics::MECANUM, M2_MAX_RPM, WHEEL_DIAMETER_M2, FR_WHEELS_DISTANCE_M2, LR_WHEELS_DISTANCE_M2);
 
