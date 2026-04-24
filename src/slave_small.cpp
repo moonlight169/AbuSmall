@@ -2,15 +2,15 @@
 #include <Wire.h>
 #include "Motor.h"
 #include "config.h"
+#include <PS4Controller.h>
 
 #define Address 0x04
 
 // เพิ่ม volatile ป้องกันบั๊กเวลาตัวแปรถูกเปลี่ยนค่าข้ามฟังก์ชัน
-volatile int lift_target = 0;
 volatile char last_command = '\0';
 volatile bool new_data_received = false;
 
-Motor MotorLift(MotorPinLift_M1_A, MotorPinLift_M1_B, M_LIFT_MAX_RPM);
+const int LStickY_Calib = 20;
 
 // ----------------------------------------------------
 // ฟังก์ชันนี้จะทำงานอัตโนมัติ (Interrupt) เมื่อ Master ส่งข้อมูลมาให้
@@ -22,14 +22,21 @@ void receiveEvent(int howMany) {
     last_command = command;
     new_data_received = true;
 
-    if (command == 'F') {
-      lift_target = 1;
-    } else if (command == 'G') {
-      lift_target = 0;
-    } else if (command == 'A') {
+    if (command == 'A') {
       digitalWrite(RelayM1_PIN5, !digitalRead(RelayM1_PIN5));
     } else if (command == 'B') {
       digitalWrite(RelayM1_PIN6, !digitalRead(RelayM1_PIN6));
+    } else if (command == 'C') { 
+      // รอใส่คำสั่ง
+    } else if (command == 'U'){
+      digitalWrite(MotorPinLift_M1_A, HIGH); 
+      digitalWrite(MotorPinLift_M1_B, LOW);
+    } else if (command == 'D') {
+      digitalWrite(MotorPinLift_M1_A, LOW);
+      digitalWrite(MotorPinLift_M1_B, HIGH);
+    } else if (command == 'S') {
+      digitalWrite(MotorPinLift_M1_A, LOW);
+      digitalWrite(MotorPinLift_M1_B, LOW);
     }
   }
 }
@@ -67,6 +74,14 @@ void setup() {
     Wire.onReceive(receiveEvent); 
     Wire.onRequest(requestEvent);
 
+    pinMode(MotorPinLift_M1_A, OUTPUT);
+    pinMode(MotorPinLift_M1_B, OUTPUT);
+    
+    digitalWrite(MotorPinLift_M1_A, LOW);
+    digitalWrite(MotorPinLift_M1_B, LOW);
+
+    PS4.begin("d4:e9:f4:e2:5e:44");
+
     pinMode(LimitM1_SW_UP, INPUT_PULLUP);
     pinMode(LimitM1_SW_DOWN, INPUT_PULLUP);
 
@@ -75,12 +90,6 @@ void setup() {
 }
 
 void loop() {
-    if (new_data_received) {
-      Serial.print("Received command: ");
-      Serial.println(last_command);
-      new_data_received = false; // เคลียร์สถานะ
-    }
-
     // คอยเช็ค Limit Switch และควบคุมมอเตอร์ตลอดเวลา
     // lift_control(); 
 

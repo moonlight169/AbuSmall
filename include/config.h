@@ -20,8 +20,8 @@
 
 #define LimitM1_SW_UP 5
 #define LimitM1_SW_DOWN 4
-#define MotorPinLift_M1_A 27
-#define MotorPinLift_M1_B 14
+#define MotorPinLift_M1_A 32
+#define MotorPinLift_M1_B 33
 
 //master2
 #define MotorPinFLM2_A 16

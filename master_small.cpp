@@ -36,8 +36,6 @@ float turnspeed = f_turnspeed;
 float slidespeed = f_slidespeed;
 
 int speed_mode = 0; 
-int lift_target = 0; // 0 = ลง, 1 = ขึ้น
-char lift_command = 'G'; // 'F' = ขึ้น, 'G' = ลง
 
 bool last_options_state = false; 
 
@@ -45,8 +43,11 @@ bool last_circle_state = false;
 bool last_square_state = false;
 bool last_triangle_state = false;
 bool last_x_state = false;
+bool last_share_state = false;
 bool last_L2_state = false;
 bool last_r2_state = false;
+
+char last_lift_state = 'S'; 
 
 const int LStickX_Calib = 40;
 const int LStickY_Calib = 20;
@@ -72,6 +73,7 @@ void update_control() {
     return;
   }
 
+  // --- ระบบสลับความเร็ว (Speed Mode) ---
   bool current_options_state = PS4.Options();
   if (current_options_state && !last_options_state) {
     speed_mode = (speed_mode + 1) % 2;
@@ -94,47 +96,34 @@ void update_control() {
   float d_x = 0;
   float d_y = 0;
   float d_z = 0;
-  float a_x = 0;
-  float a_y = 0;
-  float a_z = 0;
 
+  // --- ควบคุมการเดินหน้า / ถอยหลัง (D-Pad บน/ล่าง) ---
   if (PS4.Up()) {
     d_x = walk_speed;
   } else if (PS4.Down()) {
     d_x = -walk_speed;
   }
   
+  // --- ควบคุมการสไลด์ซ้าย / ขวา (D-Pad ซ้าย/ขวา) ---
   if (PS4.Left()) {
     d_y = slide_speed;
   } else if (PS4.Right()) {
     d_y = -slide_speed;
   }
 
+  // --- ควบคุมการหมุนตัว (L1 / R1) ---
   if (PS4.L1()) {
     d_z = turn_speed;  // L1 = หมุนตัวทวนเข็มนาฬิกา
   } else if (PS4.R1()) {
     d_z = -turn_speed; // R1 = หมุนตัวตามเข็มนาฬิกา
   }
 
-  int L_X = PS4.LStickX();
-  int L_Y = PS4.LStickY();
-  int R_X = PS4.RStickX();
+  // กำหนดค่าความเร็วที่จะส่งไปให้สมการ Kinematics
+  g_req_linear_vel_x = d_x;
+  g_req_linear_vel_y = d_y;
+  g_req_angular_vel_z = d_z;
 
-  if (abs(L_Y) > LStickY_Calib) {
-    a_x = ((float)L_Y / 127.0) * walk_speed;
-  }
-  if (abs(R_X) > RStickX_Calib) {
-
-    a_y = ((float)R_X / 127.0) * -slide_speed;
-  }
-  if (abs(L_X) > LStickX_Calib) {
-    a_z = ((float)L_X / 127.0) * -turn_speed;
-  }
-
-  g_req_linear_vel_x = a_x + d_x;
-  g_req_linear_vel_y = a_y + d_y;
-  g_req_angular_vel_z = a_z + d_z;
-
+  // Constrain ป้องกันค่าเกิน (เผื่อไว้)
   g_req_linear_vel_x = constrain(g_req_linear_vel_x, -walk_speed, walk_speed);
   g_req_linear_vel_y = constrain(g_req_linear_vel_y, -slide_speed, slide_speed);
   g_req_angular_vel_z = constrain(g_req_angular_vel_z, -turn_speed, turn_speed);
@@ -165,6 +154,7 @@ void digital_control(){
   }
   last_r2_state = r2_pressed;
 
+  // sent to slave
   bool square_pressed = PS4.Square();
   if (square_pressed && !last_square_state) {
     Wire.beginTransmission(Address_Small);
@@ -180,6 +170,35 @@ void digital_control(){
     Wire.endTransmission();
   }
   last_triangle_state = triangle_pressed;
+
+  bool share_pressed = PS4.Share();
+  if (share_pressed && !last_share_state) {
+
+  }
+  last_share_state = share_pressed;
+}
+
+void lift_control() {
+  int L_Y = PS4.LStickY();
+  char current_state;
+
+  if (abs(L_Y) > LStickY_Calib) {
+    if (L_Y > 0) {
+      current_state = 'U';
+    } else {
+      current_state = 'D';
+    }
+  } else {
+    current_state = 'S';
+  }
+
+  if (current_state != last_lift_state) {
+    Wire.beginTransmission(Address_Small);
+    Wire.write(current_state);
+    Wire.endTransmission();
+    
+    last_lift_state = current_state;
+  }
 }
 
 void setup() {
@@ -202,6 +221,7 @@ void setup() {
 void loop() {
   update_control();
   digital_control();
+  lift_control();
 
   unsigned long now = millis();
   if ((now - prev_control_time) >= (1000 / COMMAND_RATE)) {
