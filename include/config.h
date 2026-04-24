@@ -1,15 +1,21 @@
 //master
-#define MotorPinFLM1_A 17
-#define MotorPinFLM1_B 18
+#define MotorPinFLM1_A 4
+#define MotorPinFLM1_B 16
 
-#define MotorPinFRM1_A 16
-#define MotorPinFRM1_B 4
+#define MotorPinFRM1_A 18
+#define MotorPinFRM1_B 17
 
-#define MotorPinRLM1_A 33
-#define MotorPinRLM1_B 32
+#define MotorPinRLM1_A 19
+#define MotorPinRLM1_B 23
 
-#define MotorPinRRM1_A 23
-#define MotorPinRRM1_B 19
+#define MotorPinRRM1_A 32
+#define MotorPinRRM1_B 33
+
+#define RelayM1_PIN1 32
+#define RelayM1_PIN2 33
+#define RelayM1_PIN3 23
+#define RelayM1_PIN4 19
+#define RelayM1_PIN5 17
 
 #define LimitM1_SW_UP 5
 #define LimitM1_SW_DOWN 4
@@ -87,6 +93,8 @@
 #define MotorPinS3RR_B 19
 
 #define M_MAX_RPM 200
+#define M_LIFT_MAX_RPM 170
+
 #define M2_MAX_RPM 170
 #define S1_MAX_RPM 200
 #define S2_MAX_RPM 200
@@ -115,3 +123,6 @@
 #define WHEEL_DIAMETER_M2 0.090
 #define FR_WHEELS_DISTANCE_M2 0.550
 #define LR_WHEELS_DISTANCE_M2 0.790
+
+#define SDA_PIN 21
+#define SCL_PIN 22

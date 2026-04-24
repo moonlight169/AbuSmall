@@ -210,7 +210,7 @@ void digital_control(){
 void setup() {
   Serial.begin(115200);
   setCpuFrequencyMhz(240);
-  PS4.begin("14:08:08:ab:7a:88");
+  PS4.begin("08:a6:f7:10:a8:5c");
   Wire.begin(SDA_PIN, SCL_PIN);
   Holding.init();
   EncoderFL.attachSingleEdge(EncoderPinFL_A, EncoderPinFL_B);

@@ -4,15 +4,16 @@
 #include "Holding.h"
 #include "Kinematics.h"
 #include <PS4Controller.h>
+#include <Wire.h>
 
-//d4:e9:f4:e2:1c:c8
+#define Address_Small 0x04
 
-Motor MotorFL(MotorPinFLM1_A, MotorPinFL_B, MAX_RPM);
-Motor MotorFR(MotorPinFRM1_A, MotorPinFR_B, MAX_RPM);
-Motor MotorRL(MotorPinRLM1_A, MotorPinRL_B, MAX_RPM);
-Motor MotorRR(MotorPinRRM1_A, MotorPinRR_B, MAX_RPM);
+Motor MotorFL(MotorPinFLM1_A, MotorPinFLM1_B, M_MAX_RPM);
+Motor MotorFR(MotorPinFRM1_A, MotorPinFRM1_B, M_MAX_RPM);
+Motor MotorRL(MotorPinRLM1_A, MotorPinRLM1_B, M_MAX_RPM);
+Motor MotorRR(MotorPinRRM1_A, MotorPinRRM1_B, M_MAX_RPM);
 
-Kinematics kinematics(Kinematics::MECANUM, MAX_RPM, WHEEL_DIAMETER, FR_WHEELS_DISTANCE, LR_WHEELS_DISTANCE);
+Kinematics kinematics(Kinematics::MECANUM, M_MAX_RPM, WHEEL_DIAMETER, FR_WHEELS_DISTANCE, LR_WHEELS_DISTANCE);
 
 #define COMMAND_RATE 50
 unsigned long prev_control_time = 0;
@@ -35,8 +36,17 @@ float turnspeed = f_turnspeed;
 float slidespeed = f_slidespeed;
 
 int speed_mode = 0; 
+int lift_target = 0; // 0 = ลง, 1 = ขึ้น
+char lift_command = 'G'; // 'F' = ขึ้น, 'G' = ลง
 
 bool last_options_state = false; 
+
+bool last_circle_state = false;
+bool last_square_state = false;
+bool last_triangle_state = false;
+bool last_x_state = false;
+bool last_share_state = false;
+bool last_r2_state = false;
 
 const int LStickX_Calib = 40;
 const int LStickY_Calib = 20;
@@ -130,15 +140,76 @@ void update_control() {
   g_req_angular_vel_z = constrain(g_req_angular_vel_z, -turn_speed, turn_speed);
 }
 
+void digital_control(){
+  bool circle_pressed = PS4.Circle();
+  if (circle_pressed && !last_circle_state) {
+    Wire.beginTransmission(Address_Small);
+    Wire.write('A');
+    Wire.endTransmission();
+  }
+  last_circle_state = circle_pressed;
+
+  bool x_pressed = PS4.Cross();
+  if (x_pressed && !last_x_state) {
+    Wire.beginTransmission(Address_Small);
+    Wire.write('B');
+    Wire.endTransmission();
+  }
+  last_x_state = x_pressed;
+
+  bool square_pressed = PS4.Square();
+  if (square_pressed && !last_square_state) {
+    Wire.beginTransmission(Address_Small);
+    Wire.write('C');
+    Wire.endTransmission();
+  }
+  last_square_state = square_pressed;
+
+  bool sheared_pressed = PS4.Share();
+  if (sheared_pressed && !last_share_state) {
+    Wire.beginTransmission(Address_Small);
+    Wire.write('D');
+    Wire.endTransmission();
+  }
+  last_share_state = sheared_pressed;
+
+  bool r2_pressed = PS4.R2();
+  if (r2_pressed && !last_r2_state) {
+    Wire.beginTransmission(Address_Small);
+    Wire.write('E');
+    Wire.endTransmission();
+  }
+  last_r2_state = r2_pressed;
+
+  bool triangle_pressed = PS4.Triangle();
+  if (triangle_pressed && !last_triangle_state) {
+    lift_target = (lift_target + 1) % 2;
+
+    if (lift_target == 1) { 
+      lift_command = 'F';
+    } else {
+      lift_command = 'G';
+    }
+
+    Wire.beginTransmission(Address_Small);
+    Wire.write(lift_command);
+    Wire.endTransmission();
+  }
+  last_triangle_state = triangle_pressed;
+}
+
 void setup() {
   Serial.begin(115200);
-  setCpuFrequencyMhz(240);
-  PS4.begin("d4:e9:f4:e2:1c:c8");
+  Wire.begin(SDA_PIN, SCL_PIN);
+  setCpuFrequencyMhz(160);
+  PS4.begin("08:a6:f7:10:a8:5c");
   Holding.init();
+  
 }
 
 void loop() {
   update_control();
+  digital_control();
 
   unsigned long now = millis();
   if ((now - prev_control_time) >= (1000 / COMMAND_RATE)) {
