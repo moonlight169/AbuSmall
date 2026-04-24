@@ -11,11 +11,12 @@
 #define MotorPinRRM1_A 32
 #define MotorPinRRM1_B 33
 
-#define RelayM1_PIN1 32
-#define RelayM1_PIN2 33
-#define RelayM1_PIN3 23
-#define RelayM1_PIN4 19
-#define RelayM1_PIN5 17
+#define RelayM1_PIN1 27
+#define RelayM1_PIN2 13
+#define RelayM1_PIN3 25
+#define RelayM1_PIN4 26
+#define RelayM1_PIN5 25
+#define RelayM1_PIN6 26
 
 #define LimitM1_SW_UP 5
 #define LimitM1_SW_DOWN 4

@@ -45,7 +45,7 @@ bool last_circle_state = false;
 bool last_square_state = false;
 bool last_triangle_state = false;
 bool last_x_state = false;
-bool last_share_state = false;
+bool last_L2_state = false;
 bool last_r2_state = false;
 
 const int LStickX_Calib = 40;
@@ -143,56 +143,40 @@ void update_control() {
 void digital_control(){
   bool circle_pressed = PS4.Circle();
   if (circle_pressed && !last_circle_state) {
-    Wire.beginTransmission(Address_Small);
-    Wire.write('A');
-    Wire.endTransmission();
+    digitalWrite(RelayM1_PIN1, !digitalRead(RelayM1_PIN1)); 
   }
   last_circle_state = circle_pressed;
 
   bool x_pressed = PS4.Cross();
   if (x_pressed && !last_x_state) {
-    Wire.beginTransmission(Address_Small);
-    Wire.write('B');
-    Wire.endTransmission();
+    digitalWrite(RelayM1_PIN2, !digitalRead(RelayM1_PIN2));
   }
   last_x_state = x_pressed;
+
+  bool L2_pressed = PS4.L2();
+  if (L2_pressed && !last_L2_state) {
+    digitalWrite(RelayM1_PIN3, !digitalRead(RelayM1_PIN3));
+  }
+  last_L2_state = L2_pressed;
+
+  bool r2_pressed = PS4.R2();
+  if (r2_pressed && !last_r2_state) {
+    digitalWrite(RelayM1_PIN4, !digitalRead(RelayM1_PIN4));
+  }
+  last_r2_state = r2_pressed;
 
   bool square_pressed = PS4.Square();
   if (square_pressed && !last_square_state) {
     Wire.beginTransmission(Address_Small);
-    Wire.write('C');
+    Wire.write('A');
     Wire.endTransmission();
   }
   last_square_state = square_pressed;
 
-  bool sheared_pressed = PS4.Share();
-  if (sheared_pressed && !last_share_state) {
-    Wire.beginTransmission(Address_Small);
-    Wire.write('D');
-    Wire.endTransmission();
-  }
-  last_share_state = sheared_pressed;
-
-  bool r2_pressed = PS4.R2();
-  if (r2_pressed && !last_r2_state) {
-    Wire.beginTransmission(Address_Small);
-    Wire.write('E');
-    Wire.endTransmission();
-  }
-  last_r2_state = r2_pressed;
-
   bool triangle_pressed = PS4.Triangle();
   if (triangle_pressed && !last_triangle_state) {
-    lift_target = (lift_target + 1) % 2;
-
-    if (lift_target == 1) { 
-      lift_command = 'F';
-    } else {
-      lift_command = 'G';
-    }
-
     Wire.beginTransmission(Address_Small);
-    Wire.write(lift_command);
+    Wire.write('B');
     Wire.endTransmission();
   }
   last_triangle_state = triangle_pressed;
@@ -204,7 +188,15 @@ void setup() {
   setCpuFrequencyMhz(160);
   PS4.begin("08:a6:f7:10:a8:5c");
   Holding.init();
+  pinMode(RelayM1_PIN1, OUTPUT);
+  pinMode(RelayM1_PIN2, OUTPUT);
+  pinMode(RelayM1_PIN3, OUTPUT);
+  pinMode(RelayM1_PIN4, OUTPUT);
   
+  digitalWrite(RelayM1_PIN1, LOW);
+  digitalWrite(RelayM1_PIN2, LOW);
+  digitalWrite(RelayM1_PIN3, LOW);
+  digitalWrite(RelayM1_PIN4, LOW);
 }
 
 void loop() {
