@@ -1,12 +1,17 @@
 #include <Arduino.h>
-#define limitSWPin 5
+#define limitSWFPin 27
+#define limitSWBPin 13
 
 void setup() {
     Serial.begin(115200);
-    pinMode(limitSWPin, INPUT_PULLUP);
+    pinMode(limitSWFPin, INPUT_PULLUP);
+    pinMode(limitSWBPin, INPUT_PULLUP);
 }
 
 void loop() {
-    Serial.println(digitalRead(limitSWPin));
+    Serial.print("Front: ");
+    Serial.println(digitalRead(limitSWFPin));
+    Serial.print("Back: ");
+    Serial.println(digitalRead(limitSWBPin));
     delay(1000);
 }

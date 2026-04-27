@@ -18,8 +18,8 @@
 #define RelayM1_PIN5 25
 #define RelayM1_PIN6 26
 
-#define LimitM1_SW_UP 5
-#define LimitM1_SW_DOWN 4
+#define limitSWFPin 27
+#define limitSWBPin 13
 #define MotorPinLift_M1_A 32
 #define MotorPinLift_M1_B 33
 

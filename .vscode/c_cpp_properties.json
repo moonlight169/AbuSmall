@@ -10,6 +10,7 @@
             "includePath": [
                 "C:/Users/monli/Downloads/ABU-esp-wroom/include",
                 "C:/Users/monli/Downloads/ABU-esp-wroom/src",
+                "C:/Users/monli/Downloads/ABU-esp-wroom/lib/PS4-esp32-master/src",
                 "C:/Users/monli/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 "C:/Users/monli/Downloads/ABU-esp-wroom/.pio/libdeps/esp32dev/PID",
                 "C:/Users/monli/Downloads/ABU-esp-wroom/.pio/libdeps/esp32dev/ESP32Encoder/src",
@@ -212,7 +213,6 @@
                 "C:/Users/monli/.platformio/packages/framework-arduinoespressif32/variants/esp32",
                 "C:/Users/monli/Downloads/ABU-esp-wroom/lib/Kinematics",
                 "C:/Users/monli/Downloads/ABU-esp-wroom/lib/PID",
-                "C:/Users/monli/Downloads/ABU-esp-wroom/lib/PS4-esp32-master/src",
                 "C:/Users/monli/Downloads/ABU-esp-wroom/lib/PS4Controller_ESP32-main",
                 "C:/Users/monli/Downloads/ABU-esp-wroom/lib/pcf8574-main/src",
                 "C:/Users/monli/Downloads/ABU-esp-wroom/lib/ros_lib",
@@ -258,6 +258,7 @@
                 "path": [
                     "C:/Users/monli/Downloads/ABU-esp-wroom/include",
                     "C:/Users/monli/Downloads/ABU-esp-wroom/src",
+                    "C:/Users/monli/Downloads/ABU-esp-wroom/lib/PS4-esp32-master/src",
                     "C:/Users/monli/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     "C:/Users/monli/Downloads/ABU-esp-wroom/.pio/libdeps/esp32dev/PID",
                     "C:/Users/monli/Downloads/ABU-esp-wroom/.pio/libdeps/esp32dev/ESP32Encoder/src",
@@ -460,7 +461,6 @@
                     "C:/Users/monli/.platformio/packages/framework-arduinoespressif32/variants/esp32",
                     "C:/Users/monli/Downloads/ABU-esp-wroom/lib/Kinematics",
                     "C:/Users/monli/Downloads/ABU-esp-wroom/lib/PID",
-                    "C:/Users/monli/Downloads/ABU-esp-wroom/lib/PS4-esp32-master/src",
                     "C:/Users/monli/Downloads/ABU-esp-wroom/lib/PS4Controller_ESP32-main",
                     "C:/Users/monli/Downloads/ABU-esp-wroom/lib/pcf8574-main/src",
                     "C:/Users/monli/Downloads/ABU-esp-wroom/lib/ros_lib",
