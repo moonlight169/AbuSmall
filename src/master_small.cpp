@@ -31,21 +31,16 @@ float n_turnspeed = 2.0;
 float f_slidespeed = 1.8;
 float n_slidespeed = 1.2;
 //------------------------------------
-float walkspeed = f_walkspeed;
-float turnspeed = f_turnspeed;
-float slidespeed = f_slidespeed;
-
-int speed_mode = 0; 
+float walkspeed = n_walkspeed;
+float turnspeed = n_turnspeed;
+float slidespeed = n_slidespeed;
 
 bool last_options_state = false; 
-
 bool last_circle_state = false;
 bool last_square_state = false;
 bool last_triangle_state = false;
 bool last_x_state = false;
 bool last_share_state = false;
-bool last_L2_state = false;
-bool last_r2_state = false;
 
 char last_lift_state = 'S'; 
 
@@ -56,26 +51,6 @@ const int RStickY_Calib = 20;
 
 void moveBase() {
   Kinematics::rpm req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
-
-  // // --- ลอจิกเพิ่มความเร็วตามทิศทาง ---
-  // float rpm_offset = 3.0;
-
-  // if (g_req_linear_vel_x > 0) { 
-  //   req_rpm.motor1 += rpm_offset; // MotorFL
-  //   req_rpm.motor2 += rpm_offset; // MotorFR
-  // } 
-  // else if (g_req_linear_vel_x < 0) {
-  //   req_rpm.motor3 -= rpm_offset; // MotorRL
-  //   req_rpm.motor4 -= rpm_offset; // MotorRR
-  // }
-  // if (g_req_linear_vel_y > 0) { 
-  //   req_rpm.motor1 += rpm_offset; // MotorFL
-  //   req_rpm.motor4 += rpm_offset; // MotorRR
-  // } 
-  // else if (g_req_linear_vel_y < 0) {
-  //   req_rpm.motor2 -= rpm_offset; // MotorFR
-  //   req_rpm.motor3 -= rpm_offset; // MotorRL
-  // }
 
   MotorFL.runRPM(req_rpm.motor1);
   MotorFR.runRPM(req_rpm.motor2);
@@ -92,21 +67,15 @@ void update_control() {
     return;
   }
 
-  // --- ระบบสลับความเร็ว (Speed Mode) ---
-  bool current_options_state = PS4.Options();
-  if (current_options_state && !last_options_state) {
-    speed_mode = (speed_mode + 1) % 2;
-    if (speed_mode == 0) {
-      walkspeed = f_walkspeed;
-      turnspeed = f_turnspeed;
-      slidespeed = f_slidespeed;
-    } else {
-      walkspeed = n_walkspeed;
-      turnspeed = n_turnspeed;
-      slidespeed = n_slidespeed;
-    }
+  if (PS4.R2()) {
+    walkspeed = f_walkspeed;
+    turnspeed = f_turnspeed;
+    slidespeed = f_slidespeed;
+  } else {
+    walkspeed = n_walkspeed;
+    turnspeed = n_turnspeed;
+    slidespeed = n_slidespeed;
   }
-  last_options_state = current_options_state;
 
   float walk_speed = walkspeed;
   float turn_speed = turnspeed;
@@ -137,7 +106,6 @@ void update_control() {
     d_z = -turn_speed; // R1 = หมุนตัวตามเข็มนาฬิกา
   }
 
-  // กำหนดค่าความเร็วที่จะส่งไปให้สมการ Kinematics
   g_req_linear_vel_x = d_x;
   g_req_linear_vel_y = d_y;
   g_req_angular_vel_z = d_z;
@@ -151,27 +119,27 @@ void update_control() {
 void digital_control(){
   bool circle_pressed = PS4.Circle();
   if (circle_pressed && !last_circle_state) {
-    digitalWrite(RelayM1_PIN1, !digitalRead(RelayM1_PIN1)); 
+    digitalWrite(RelayM1_PIN3, !digitalRead(RelayM1_PIN3)); 
   }
   last_circle_state = circle_pressed;
 
-  bool x_pressed = PS4.Cross();
-  if (x_pressed && !last_x_state) {
-    digitalWrite(RelayM1_PIN2, !digitalRead(RelayM1_PIN2));
+  if (PS4.Cross()) {
+    digitalWrite(RelayM1_PIN2, LOW); 
+  } else {
+    digitalWrite(RelayM1_PIN2, HIGH);
   }
-  last_x_state = x_pressed;
 
-  bool L2_pressed = PS4.L2();
-  if (L2_pressed && !last_L2_state) {
-    digitalWrite(RelayM1_PIN3, !digitalRead(RelayM1_PIN3));
+  bool share_pressed = PS4.Share();
+  if (share_pressed && !last_share_state) {
+    digitalWrite(RelayM1_PIN1, !digitalRead(RelayM1_PIN1));
   }
-  last_L2_state = L2_pressed;
+  last_share_state = share_pressed;
 
-  bool r2_pressed = PS4.R2();
-  if (r2_pressed && !last_r2_state) {
+  bool options_pressed = PS4.Options();
+  if (options_pressed && !last_options_state) {
     digitalWrite(RelayM1_PIN4, !digitalRead(RelayM1_PIN4));
   }
-  last_r2_state = r2_pressed;
+  last_options_state = options_pressed;
 
   // sent to slave
   bool square_pressed = PS4.Square();
@@ -189,12 +157,6 @@ void digital_control(){
     Wire.endTransmission();
   }
   last_triangle_state = triangle_pressed;
-
-  bool share_pressed = PS4.Share();
-  if (share_pressed && !last_share_state) {
-
-  }
-  last_share_state = share_pressed;
 }
 
 void lift_control() {
