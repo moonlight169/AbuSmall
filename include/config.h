@@ -93,7 +93,7 @@
 #define MotorPinS3RR_A 23
 #define MotorPinS3RR_B 19
 
-#define M_MAX_RPM 200
+#define M_MAX_RPM 255
 #define M_LIFT_MAX_RPM 170
 
 #define M2_MAX_RPM 170
