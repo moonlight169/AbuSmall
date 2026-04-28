@@ -117,17 +117,17 @@ void update_control() {
   float d_y = 0;
   float d_z = 0;
 
-  // --- ควบคุมการเดินหน้า / ถอยหลัง (D-Pad บน/ล่าง) ---
-  if (PS4.Up()) {
+  // --- ควบคุมการเดินหน้า / ถอยหลัง (D-Pad บน/ล่าง และแนวเฉียง) ---
+  if (PS4.Up() || PS4.UpRight() || PS4.UpLeft()) {
     d_x = walk_speed;
-  } else if (PS4.Down()) {
+  } else if (PS4.Down() || PS4.DownRight() || PS4.DownLeft()) {
     d_x = -walk_speed;
   }
   
-  // --- ควบคุมการสไลด์ซ้าย / ขวา (D-Pad ซ้าย/ขวา) ---
-  if (PS4.Left()) {
+  // --- ควบคุมการสไลด์ซ้าย / ขวา (D-Pad ซ้าย/ขวา และแนวเฉียง) ---
+  if (PS4.Left() || PS4.UpLeft() || PS4.DownLeft()) {
     d_y = slide_speed;
-  } else if (PS4.Right()) {
+  } else if (PS4.Right() || PS4.UpRight() || PS4.DownRight()) {
     d_y = -slide_speed;
   }
 
