@@ -58,6 +58,26 @@ Holding Holding;
 void moveBase() {
   Kinematics::rpm req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
 
+  // // --- ลอจิกเพิ่มความเร็วตามทิศทาง ---
+  // float rpm_offset = 3.0;
+
+  // if (g_req_linear_vel_x > 0) { 
+  //   req_rpm.motor1 += rpm_offset; // MotorFL
+  //   req_rpm.motor2 += rpm_offset; // MotorFR
+  // } 
+  // else if (g_req_linear_vel_x < 0) {
+  //   req_rpm.motor3 -= rpm_offset; // MotorRL
+  //   req_rpm.motor4 -= rpm_offset; // MotorRR
+  // }
+  // if (g_req_linear_vel_y > 0) { 
+  //   req_rpm.motor1 += rpm_offset; // MotorFL
+  //   req_rpm.motor4 += rpm_offset; // MotorRR
+  // } 
+  // else if (g_req_linear_vel_y < 0) {
+  //   req_rpm.motor2 -= rpm_offset; // MotorFR
+  //   req_rpm.motor3 -= rpm_offset; // MotorRL
+  // }
+
   MotorFL.runRPM(req_rpm.motor1);
   MotorFR.runRPM(req_rpm.motor2);
   MotorRL.runRPM(req_rpm.motor3);
@@ -212,10 +232,10 @@ void setup() {
   pinMode(RelayM1_PIN3, OUTPUT);
   pinMode(RelayM1_PIN4, OUTPUT);
   
-  digitalWrite(RelayM1_PIN1, LOW);
-  digitalWrite(RelayM1_PIN2, LOW);
-  digitalWrite(RelayM1_PIN3, LOW);
-  digitalWrite(RelayM1_PIN4, LOW);
+  digitalWrite(RelayM1_PIN1, HIGH);
+  digitalWrite(RelayM1_PIN2, HIGH);
+  digitalWrite(RelayM1_PIN3, HIGH);
+  digitalWrite(RelayM1_PIN4, HIGH);
 }
 
 void loop() {

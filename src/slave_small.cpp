@@ -9,7 +9,6 @@
 volatile char last_command = '\0';
 volatile bool new_data_received = false;
 
-// เพิ่มตัวแปรสำหรับเก็บสถานะปัจจุบันของมอเตอร์ (S = Stop, U = Up, D = Down)
 volatile char motorState = 'S'; 
 
 const int LStickY_Calib = 20;
@@ -24,7 +23,6 @@ void receiveEvent(int howMany) {
     last_command = command;
     new_data_received = true;
 
-    // ควบคุม Relay (สลับสถานะได้เลย เพราะทำงานครั้งเดียวจบ)
     if (command == 'A') {
       digitalWrite(RelayM1_PIN5, !digitalRead(RelayM1_PIN5));
     } else if (command == 'B') {
@@ -63,6 +61,9 @@ void setup() {
 
     pinMode(RelayM1_PIN5, OUTPUT);
     pinMode(RelayM1_PIN6, OUTPUT);
+
+    digitalWrite(RelayM1_PIN5, HIGH);
+    digitalWrite(RelayM1_PIN6, HIGH);
 }
 
 void loop() {
@@ -87,7 +88,6 @@ void loop() {
     }
   } 
   else if (motorState == 'S') {
-      // สั่งหยุดการทำงาน
       digitalWrite(MotorPinLift_M1_A, LOW);
       digitalWrite(MotorPinLift_M1_B, LOW);
   }
