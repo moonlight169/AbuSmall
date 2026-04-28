@@ -52,8 +52,7 @@ char last_lift_state = 'S';
 const int LStickX_Calib = 40;
 const int LStickY_Calib = 20;
 const int RStickX_Calib = 20;
-
-Holding Holding;
+const int RStickY_Calib = 20;
 
 void moveBase() {
   Kinematics::rpm req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
@@ -199,11 +198,11 @@ void digital_control(){
 }
 
 void lift_control() {
-  int L_Y = PS4.LStickY();
+  int R_Y = PS4.RStickY();
   char current_state;
 
-  if (abs(L_Y) > LStickY_Calib) {
-    if (L_Y > 0) {
+  if (abs(R_Y) > RStickY_Calib) {
+    if (R_Y > 0) {
       current_state = 'U';
     } else {
       current_state = 'D';
@@ -226,7 +225,6 @@ void setup() {
   Wire.begin(SDA_PIN, SCL_PIN);
   setCpuFrequencyMhz(160);
   PS4.begin("08:a6:f7:10:a8:5c");
-  Holding.init();
   pinMode(RelayM1_PIN1, OUTPUT);
   pinMode(RelayM1_PIN2, OUTPUT);
   pinMode(RelayM1_PIN3, OUTPUT);
