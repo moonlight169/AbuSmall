@@ -68,13 +68,13 @@ void update_control() {
   }
 
   if (PS4.R2()) {
-    walkspeed = f_walkspeed;
-    turnspeed = f_turnspeed;
-    slidespeed = f_slidespeed;
-  } else {
     walkspeed = n_walkspeed;
     turnspeed = n_turnspeed;
     slidespeed = n_slidespeed;
+  } else {
+    walkspeed = f_walkspeed;
+    turnspeed = f_turnspeed;
+    slidespeed = f_slidespeed;
   }
 
   float walk_speed = walkspeed;
@@ -117,11 +117,11 @@ void update_control() {
 }
 
 void digital_control(){
-  bool circle_pressed = PS4.Circle();
-  if (circle_pressed && !last_circle_state) {
-    digitalWrite(RelayM1_PIN3, !digitalRead(RelayM1_PIN3)); 
+  bool triangle_pressed = PS4.Triangle();
+  if (triangle_pressed && !last_triangle_state) {
+    digitalWrite(RelayM1_PIN3, !digitalRead(RelayM1_PIN3));
   }
-  last_circle_state = circle_pressed;
+  last_triangle_state = triangle_pressed;
 
   if (PS4.Cross()) {
     digitalWrite(RelayM1_PIN2, LOW); 
@@ -150,13 +150,13 @@ void digital_control(){
   }
   last_square_state = square_pressed;
 
-  bool triangle_pressed = PS4.Triangle();
-  if (triangle_pressed && !last_triangle_state) {
+  bool circle_pressed = PS4.Circle();
+  if (circle_pressed && !last_circle_state) {
     Wire.beginTransmission(Address_Small);
     Wire.write('B');
     Wire.endTransmission();
   }
-  last_triangle_state = triangle_pressed;
+  last_circle_state = circle_pressed;  
 }
 
 void lift_control() {
