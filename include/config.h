@@ -1,4 +1,4 @@
-//master
+//master small
 #define MotorPinFLM1_A 4
 #define MotorPinFLM1_B 16
 
@@ -23,21 +23,22 @@
 #define MotorPinLift_M1_A 32
 #define MotorPinLift_M1_B 33
 
-//master2
-#define MotorPinFLM2_A 16
-#define MotorPinFLM2_B 4
+//master big
+#define MotorPinFLM2_A 27
+#define MotorPinFLM2_B 13
 
-#define MotorPinFRM2_A 17
-#define MotorPinFRM2_B 18
+#define MotorPinFRM2_A 4
+#define MotorPinFRM2_B 16
 
-#define MotorPinRLM2_A 23
-#define MotorPinRLM2_B 19
+#define MotorPinRLM2_A 17
+#define MotorPinRLM2_B 18
 
-#define MotorPinRRM2_A 33
-#define MotorPinRRM2_B 32
+#define MotorPinRRM2_A 23
+#define MotorPinRRM2_B 19
 
-#define EncoderPinFL_A 13
-#define EncoderPinFL_B 27
+
+#define EncoderPinFL_A 33
+#define EncoderPinFL_B 32
 
 #define EncoderPinFR_A 25
 #define EncoderPinFR_B 26
@@ -53,6 +54,15 @@
 
 #define COUNT_PER_REV_FR 6410
 #define COUNT_PER_REV_RR 6410
+
+#define limitSWM2_PIN1 32
+#define limitSWM2_PIN2 33
+#define limitSWM2_PIN3 34
+#define limitSWM2_PIN4 35
+#define limitSWM2_PIN5 36
+#define limitSWM2_PIN6 37
+#define limitSWM2_PIN7 32
+#define limitSWM2_PIN8 33
 
 //slave1
 #define MotorPinS1FL_A 17
@@ -120,7 +130,7 @@
 #define PWM_MAX pow(2, PWM_BITS) - 1
 #define PWM_MIN -PWM_MAX
 
-//master2
+//master big
 #define WHEEL_DIAMETER_M2 0.090
 #define FR_WHEELS_DISTANCE_M2 0.550
 #define LR_WHEELS_DISTANCE_M2 0.790

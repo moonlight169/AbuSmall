@@ -10,11 +10,8 @@
 
 #define SDA_PIN 21
 #define SCL_PIN 22
-#define Address_S1 0x01
-#define Address_S2 0x02
-#define Address_S3 0x03
 
-//d4:e9:f4:e2:1c:c8
+//a4:cf:12:87:7c:cc
 
 ESP32Encoder EncoderFL;
 ESP32Encoder EncoderFR;
@@ -51,9 +48,6 @@ float slidespeed = f_slidespeed;
 int speed_mode = 0; 
 
 bool last_options_state = false; 
-bool last_square_state = false;
-bool last_triangle_state = false;
-bool last_circle_state = false;
 
 const int LStickX_Calib = 40;
 const int LStickY_Calib = 20;
@@ -105,18 +99,21 @@ void update_control() {
   float a_y = 0;
   float a_z = 0;
 
-  if (PS4.Up()) {
+  // --- ควบคุมการเดินหน้า / ถอยหลัง (D-Pad บน/ล่าง และแนวเฉียง) ---
+  if (PS4.Up() || PS4.UpRight() || PS4.UpLeft()) {
     d_x = walk_speed;
-  } else if (PS4.Down()) {
+  } else if (PS4.Down() || PS4.DownRight() || PS4.DownLeft()) {
     d_x = -walk_speed;
   }
   
-  if (PS4.Left()) {
+  // --- ควบคุมการสไลด์ซ้าย / ขวา (D-Pad ซ้าย/ขวา และแนวเฉียง) ---
+  if (PS4.Left() || PS4.UpLeft() || PS4.DownLeft()) {
     d_y = slide_speed;
-  } else if (PS4.Right()) {
+  } else if (PS4.Right() || PS4.UpRight() || PS4.DownRight()) {
     d_y = -slide_speed;
   }
 
+  // --- ควบคุมการหมุนตัว (L1 / R1) ---
   if (PS4.L1()) {
     d_z = turn_speed;  // L1 = หมุนตัวทวนเข็มนาฬิกา
   } else if (PS4.R1()) {
@@ -147,70 +144,10 @@ void update_control() {
   g_req_angular_vel_z = constrain(g_req_angular_vel_z, -turn_speed, turn_speed);
 }
 
-void digital_control(){
-  bool square_pressed = PS4.Square();
-  if (square_pressed && !last_square_state) {
-    Wire.beginTransmission(Address_S1);
-    Wire.write("Hello Slave!");   // ส่งข้อมูล
-    Wire.endTransmission();
-    Serial.print("ข้อมูลที่ Slave ตอบกลับมา: ");
-
-    // ร้องขอข้อมูลจำนวน 2 ไบต์ จาก Slave
-    Wire.requestFrom(Address_S1, 2); 
-
-    while (Wire.available()) {
-      char c = Wire.read();
-      Serial.print(c);
-    }
-    Serial.println();
-    Serial.println("-----------------------");
-  }
-  last_square_state = square_pressed;
-
-  bool triangle_pressed = PS4.Triangle();
-  if (triangle_pressed && !last_triangle_state) {
-    Wire.beginTransmission(Address_S2);
-    Wire.write("Hello Slave!");   // ส่งข้อมูล
-    Wire.endTransmission();
-    Serial.print("ข้อมูลที่ Slave ตอบกลับมา: ");
-
-    // ร้องขอข้อมูลจำนวน 2 ไบต์ จาก Slave
-    Wire.requestFrom(Address_S2, 2); 
-
-    while (Wire.available()) {
-      char c = Wire.read();
-      Serial.print(c);
-    }
-    Serial.println();
-    Serial.println("-----------------------");
-  }
-  last_triangle_state = triangle_pressed;
-
-  bool circle_pressed = PS4.Circle();
-  if (circle_pressed && !last_circle_state) {
-    Wire.beginTransmission(Address_S3);
-    Wire.write("Hello Slave!");   // ส่งข้อมูล
-    Wire.endTransmission();
-    Serial.print("ข้อมูลที่ Slave ตอบกลับมา: ");
-
-    // ร้องขอข้อมูลจำนวน 2 ไบต์ จาก Slave
-    Wire.requestFrom(Address_S3, 2); 
-
-    while (Wire.available()) {
-      char c = Wire.read();
-      Serial.print(c);
-    }
-    Serial.println();
-    Serial.println("-----------------------");
-  }
-  last_circle_state = circle_pressed;
-
-}
-
 void setup() {
   Serial.begin(115200);
   setCpuFrequencyMhz(240);
-  PS4.begin("08:a6:f7:10:a8:5c");
+  PS4.begin("a4:cf:12:87:7c:cc");
   Wire.begin(SDA_PIN, SCL_PIN);
   Holding.init();
   EncoderFL.attachSingleEdge(EncoderPinFL_A, EncoderPinFL_B);
@@ -221,7 +158,6 @@ void setup() {
 
 void loop() {
   update_control();
-  digital_control();
 
   unsigned long now = millis();
   if ((now - prev_control_time) >= (1000 / COMMAND_RATE)) {
