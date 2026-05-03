@@ -22,13 +22,13 @@ float g_req_linear_vel_x = 0;
 float g_req_linear_vel_y = 0;
 float g_req_angular_vel_z = 0;
 
-float f_walkspeed = 1.2;
+float f_walkspeed = 1.2+0.2;
 float n_walkspeed = 0.5;
 
-float f_turnspeed = 3.0;
+float f_turnspeed = 3.0+0.2;
 float n_turnspeed = 2.0;
 
-float f_slidespeed = 1.8;
+float f_slidespeed = 1.8+0.2;
 float n_slidespeed = 1.2;
 //------------------------------------
 float walkspeed = n_walkspeed;
