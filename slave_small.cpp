@@ -14,7 +14,7 @@ const int pwmChannelB = 5;
 
 // ค่าความเร็วที่ต้องการ (0-255)
 const int speed_fast = 255;
-const int speed_slow = 130; 
+const int speed_slow = 75; 
 
 void receiveEvent(int howMany) {
   while (Wire.available()) {

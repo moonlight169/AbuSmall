@@ -44,10 +44,10 @@ bool last_share_state = false;
 
 char last_lift_state = 'S'; 
 
-const int LStickX_Calib = 40;
-const int LStickY_Calib = 20;
-const int RStickX_Calib = 20;
-const int RStickY_Calib = 20;
+const int LStickX_Calib = 100;
+const int LStickY_Calib = 100;
+const int RStickX_Calib = 100;
+const int RStickY_Calib = 100;
 
 void moveBase() {
   Kinematics::rpm req_rpm = kinematics.getRPM(g_req_linear_vel_x, g_req_linear_vel_y, g_req_angular_vel_z);
@@ -177,7 +177,7 @@ void lift_control() {
     if (L_Y > 0) {
       current_state = (walkspeed == f_walkspeed) ? 'C' : 'c';
     } else {
-      // current_state = (walkspeed == f_walkspeed) ? 'O' : 'o';
+      current_state = (walkspeed == f_walkspeed) ? 'O' : 'o';
     }
   } 
   else {
