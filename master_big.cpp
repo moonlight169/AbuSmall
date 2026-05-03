@@ -6,10 +6,6 @@
 #include <ESP32Encoder.h>
 #include "PID.h"
 #include <PS4Controller.h>
-#include <Wire.h>
-
-#define SDA_PIN 21
-#define SCL_PIN 22
 
 //a4:cf:12:87:7c:cc
 

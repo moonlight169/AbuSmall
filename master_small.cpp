@@ -161,16 +161,30 @@ void digital_control(){
 
 void lift_control() {
   int R_Y = PS4.RStickY();
-  char current_state;
+  int L_Y = PS4.LStickY();
+  
+  char current_state = last_lift_state; 
 
   if (abs(R_Y) > RStickY_Calib) {
     if (R_Y > 0) {
-      current_state = 'U';
+      current_state = (walkspeed == f_walkspeed) ? 'D' : 'd';
     } else {
-      current_state = 'D';
+      current_state = (walkspeed == f_walkspeed) ? 'U' : 'u';
     }
-  } else {
-    current_state = 'S';
+  } 
+
+  else if (abs(L_Y) > LStickY_Calib) {
+    if (L_Y > 0) {
+      current_state = (walkspeed == f_walkspeed) ? 'C' : 'c';
+    } else {
+      // current_state = (walkspeed == f_walkspeed) ? 'O' : 'o';
+    }
+  } 
+  else {
+    if (last_lift_state == 'U' || last_lift_state == 'u' || 
+        last_lift_state == 'D' || last_lift_state == 'd') {
+      current_state = 'S'; 
+    }
   }
 
   if (current_state != last_lift_state) {

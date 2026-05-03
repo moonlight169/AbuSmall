@@ -5,21 +5,24 @@
 Ros2Duino esp32hello; 
 
 // ฟังก์ชัน Callback: จะทำงานเมื่อมีข้อความ String ส่งมาจาก ROS 2
-void stringCallback(String data) {
-  Serial.print("ได้รับข้อความจาก ROS 2: ");
-  Serial.println(data);
+void stringCallback(const char* data, uint16_t length) {
+  // สร้าง String จาก const char* 
+  String msg = "";
+  for(uint16_t i = 0; i < length; i++) {
+    msg += data[i];
+  }
   
-  // ถ้าได้รับคำว่า "hello" ให้เปิดไฟ LED บนบอร์ดโชว์เลย
-  if(data == "hello") {
-    digitalWrite(2, HIGH); 
-    delay(500);
+  // ตรวจสอบข้อความและสั่งงาน LED โดยไม่ใช้ Serial.print
+  if(length > 0 && data[0] == 'o') {
+    digitalWrite(2, HIGH);
+  } else if (length > 0 && data[0] == 'c') {
     digitalWrite(2, LOW);
   }
 }
 
 void setup() {
-  Serial.begin(115200);
-  pinMode(2, OUTPUT); // LED บนบอร์ด ESP32 ส่วนใหญ่คือขา 2
+  // เอา Serial.begin(115200); ออก เพราะไลบรารีจะจัดการให้เอง
+  pinMode(2, OUTPUT);
 
   // 1. ตั้งค่า Identity (ID: 1, Name: master_esp32)
   esp32hello.identity(1, "master_esp32"); 
@@ -27,16 +30,14 @@ void setup() {
   // 2. เลือกการเชื่อมต่อแบบ Serial (สาย USB)
   esp32hello.useSerial(Serial, 115200); 
 
-  // 3. ผูกฟังก์ชัน Callback สำหรับรอรับ String[cite: 1]
+  // 3. ผูกฟังก์ชัน Callback สำหรับรอรับ String
   esp32hello.onString(stringCallback); 
 
-  // 4. เริ่มต้นระบบ[cite: 3]
+  // 4. เริ่มต้นระบบ
   esp32hello.begin(); 
-  
-  Serial.println("ESP32 Master พร้อมรับข้อมูลแล้ว...");
 }
 
 void loop() {
-  // 5. บรรทัดสำคัญ: ต้องเรียกใช้เพื่อเช็กข้อมูลขาเข้าตลอดเวลา[cite: 3]
+  // 5. เรียกใช้เพื่อเช็กข้อมูลขาเข้าตลอดเวลา
   esp32hello.spinOnce(); 
 }

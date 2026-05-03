@@ -37,17 +37,17 @@
 #define MotorPinRRM2_B 19
 
 
-#define EncoderPinFL_A 33
-#define EncoderPinFL_B 32
+#define EncoderPinFL_A 26
+#define EncoderPinFL_B 25
 
-#define EncoderPinFR_A 25
-#define EncoderPinFR_B 26
+#define EncoderPinFR_A 32
+#define EncoderPinFR_B 33
 
 #define EncoderPinRL_A 34
 #define EncoderPinRL_B 35
 
-#define EncoderPinRR_A 39
-#define EncoderPinRR_B 36
+#define EncoderPinRR_A 36
+#define EncoderPinRR_B 39
 
 #define COUNT_PER_REV_FL 6410
 #define COUNT_PER_REV_RL 6410
@@ -104,7 +104,7 @@
 #define MotorPinS3RR_B 19
 
 #define M_MAX_RPM 255
-#define M_LIFT_MAX_RPM 170
+#define M_LIFT_MAX_RPM 255
 
 #define M2_MAX_RPM 170
 #define S1_MAX_RPM 200
