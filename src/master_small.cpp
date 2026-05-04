@@ -175,9 +175,9 @@ void lift_control() {
 
   else if (abs(L_Y) > LStickY_Calib) {
     if (L_Y > 0) {
-      current_state = (walkspeed == f_walkspeed) ? 'C' : 'c';
-    } else {
       current_state = (walkspeed == f_walkspeed) ? 'O' : 'o';
+    } else {
+      current_state = (walkspeed == f_walkspeed) ? 'C' : 'c';
     }
   } 
   else {
