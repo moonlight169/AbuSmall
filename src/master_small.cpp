@@ -58,15 +58,26 @@ void moveBase() {
   MotorRR.runRPM(req_rpm.motor4);
 }
 
+void stopAllMotors() {
+  g_req_linear_vel_x = 0;
+  g_req_linear_vel_y = 0;
+  g_req_angular_vel_z = 0;
+  MotorFL.run(0); MotorFR.run(0); MotorRL.run(0); MotorRR.run(0);
+  
+  if (last_lift_state != 'S') {
+    Wire.beginTransmission(Address_Small);
+    Wire.write('S');
+    Wire.endTransmission();
+    last_lift_state = 'S';
+  }
+}
+
 void update_control() {
   if (!PS4.isConnected()) {
-    g_req_linear_vel_x = 0; 
-    g_req_linear_vel_y = 0; 
-    g_req_angular_vel_z = 0;
-    MotorFL.run(0); MotorFR.run(0); MotorRL.run(0); MotorRR.run(0);
+    stopAllMotors();
     return;
   }
-
+  
   if (PS4.R2()) {
     walkspeed = n_walkspeed;
     turnspeed = n_turnspeed;
@@ -77,43 +88,26 @@ void update_control() {
     slidespeed = f_slidespeed;
   }
 
-  float walk_speed = walkspeed;
-  float turn_speed = turnspeed;
-  float slide_speed = slidespeed;
-
   float d_x = 0;
   float d_y = 0;
   float d_z = 0;
 
-  // --- ควบคุมการเดินหน้า / ถอยหลัง (D-Pad บน/ล่าง และแนวเฉียง) ---
-  if (PS4.Up() || PS4.UpRight() || PS4.UpLeft()) {
-    d_x = walk_speed;
-  } else if (PS4.Down() || PS4.DownRight() || PS4.DownLeft()) {
-    d_x = -walk_speed;
-  }
-  
-  // --- ควบคุมการสไลด์ซ้าย / ขวา (D-Pad ซ้าย/ขวา และแนวเฉียง) ---
-  if (PS4.Left() || PS4.UpLeft() || PS4.DownLeft()) {
-    d_y = slide_speed;
-  } else if (PS4.Right() || PS4.UpRight() || PS4.DownRight()) {
-    d_y = -slide_speed;
-  }
+  // ควบคุมการเดินหน้า / ถอยหลัง
+  if (PS4.Up() || PS4.UpRight() || PS4.UpLeft()) d_x = walkspeed;
+  else if (PS4.Down() || PS4.DownRight() || PS4.DownLeft()) d_x = -walkspeed;
 
-  // --- ควบคุมการหมุนตัว (L1 / R1) ---
-  if (PS4.L1()) {
-    d_z = turn_speed;  // L1 = หมุนตัวทวนเข็มนาฬิกา
-  } else if (PS4.R1()) {
-    d_z = -turn_speed; // R1 = หมุนตัวตามเข็มนาฬิกา
-  }
+  // ควบคุมการสไลด์ซ้าย / ขวา
+  if (PS4.Left() || PS4.UpLeft() || PS4.DownLeft()) d_y = slidespeed;
+  else if (PS4.Right() || PS4.UpRight() || PS4.DownRight()) d_y = -slidespeed;
 
+  // ควบคุมการหมุนตัว
+  if (PS4.L1()) d_z = turnspeed;
+  else if (PS4.R1()) d_z = -turnspeed;
+
+  // อัปเดตค่าเข้า Global Variable
   g_req_linear_vel_x = d_x;
   g_req_linear_vel_y = d_y;
   g_req_angular_vel_z = d_z;
-
-  // Constrain ป้องกันค่าเกิน (เผื่อไว้)
-  g_req_linear_vel_x = constrain(g_req_linear_vel_x, -walk_speed, walk_speed);
-  g_req_linear_vel_y = constrain(g_req_linear_vel_y, -slide_speed, slide_speed);
-  g_req_angular_vel_z = constrain(g_req_angular_vel_z, -turn_speed, turn_speed);
 }
 
 void digital_control(){
