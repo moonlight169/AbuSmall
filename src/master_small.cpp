@@ -15,7 +15,7 @@ Motor MotorRR(MotorPinRRM1_A, MotorPinRRM1_B, M_MAX_RPM);
 
 Kinematics kinematics(Kinematics::MECANUM, M_MAX_RPM, WHEEL_DIAMETER, FR_WHEELS_DISTANCE, LR_WHEELS_DISTANCE);
 
-#define COMMAND_RATE 50
+#define COMMAND_RATE 100
 unsigned long prev_control_time = 0;
 
 float g_req_linear_vel_x = 0;
@@ -193,7 +193,7 @@ void lift_control() {
 void setup() {
   Serial.begin(115200);
   Wire.begin(SDA_PIN, SCL_PIN);
-  setCpuFrequencyMhz(160);
+  // setCpuFrequencyMhz(240);
   PS4.begin("08:a6:f7:10:a8:5c");
   pinMode(RelayM1_PIN1, OUTPUT);
   pinMode(RelayM1_PIN2, OUTPUT);
@@ -208,12 +208,13 @@ void setup() {
 
 void loop() {
   update_control();
-  digital_control();
   lift_control();
 
   unsigned long now = millis();
   if ((now - prev_control_time) >= (1000 / COMMAND_RATE)) {
     moveBase();
+    digital_control();
+
     prev_control_time = now;
   }
 }
