@@ -15,7 +15,7 @@ Motor MotorRR(MotorPinRRM1_A, MotorPinRRM1_B, M_MAX_RPM);
 
 Kinematics kinematics(Kinematics::MECANUM, M_MAX_RPM, WHEEL_DIAMETER, FR_WHEELS_DISTANCE, LR_WHEELS_DISTANCE);
 
-#define COMMAND_RATE 100
+#define COMMAND_RATE 50
 unsigned long prev_control_time = 0;
 
 float g_req_linear_vel_x = 0;
@@ -117,7 +117,7 @@ void digital_control(){
   }
   last_triangle_state = triangle_pressed;
 
-  if (PS4.Cross()) {
+  if (PS4.L2()) {
     digitalWrite(RelayM1_PIN2, LOW); 
   } else {
     digitalWrite(RelayM1_PIN2, HIGH);
@@ -149,8 +149,16 @@ void digital_control(){
     Wire.beginTransmission(Address_Small);
     Wire.write('B');
     Wire.endTransmission();
+    }
+    last_circle_state = circle_pressed;  
+
+  bool x_pressed = PS4.Cross();
+  if (x_pressed && !last_x_state) {
+    Wire.beginTransmission(Address_Small);
+    Wire.write('Z');
+    Wire.endTransmission();
   }
-  last_circle_state = circle_pressed;  
+  last_x_state = x_pressed;
 }
 
 void lift_control() {
@@ -193,6 +201,8 @@ void lift_control() {
 void setup() {
   Serial.begin(115200);
   Wire.begin(SDA_PIN, SCL_PIN);
+  Wire.setTimeout(10);
+
   // setCpuFrequencyMhz(240);
   PS4.begin("08:a6:f7:10:a8:5c");
   pinMode(RelayM1_PIN1, OUTPUT);
@@ -208,12 +218,12 @@ void setup() {
 
 void loop() {
   update_control();
-  lift_control();
 
   unsigned long now = millis();
   if ((now - prev_control_time) >= (1000 / COMMAND_RATE)) {
     moveBase();
     digital_control();
+    lift_control();
 
     prev_control_time = now;
   }

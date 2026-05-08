@@ -17,6 +17,7 @@
 #define RelayM1_PIN4 26
 #define RelayM1_PIN5 25
 #define RelayM1_PIN6 26
+#define RelayM1_PIN7 23
 
 #define limitSWFPin 27
 #define limitSWBPin 13

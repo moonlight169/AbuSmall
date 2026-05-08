@@ -14,7 +14,7 @@ const int pwmChannelB = 5;
 
 // ค่าความเร็วที่ต้องการ (0-255)
 const int speed_fast = 150;
-const int speed_slow = 45; 
+const int speed_slow = 36; 
 
 void receiveEvent(int howMany) {
   while (Wire.available()) {
@@ -23,7 +23,9 @@ void receiveEvent(int howMany) {
       digitalWrite(RelayM1_PIN5, !digitalRead(RelayM1_PIN5));
     } else if (command == 'B') {
       digitalWrite(RelayM1_PIN6, !digitalRead(RelayM1_PIN6));
-    } 
+    } else if (command == 'Z') {
+      digitalWrite(RelayM1_PIN7, !digitalRead(RelayM1_PIN7));
+    }
     // รับคำสั่ง U, u, D, d, S
     else if (command == 'U' || command == 'u' || command == 'D' || command == 'd' || command == 'O' || command == 'o' || command == 'C' || command == 'c' || command == 'S') {
       motorState = command;
@@ -46,9 +48,11 @@ void setup() {
     pinMode(limitSWBPin, INPUT_PULLUP);
     pinMode(RelayM1_PIN5, OUTPUT);
     pinMode(RelayM1_PIN6, OUTPUT);
+    pinMode(RelayM1_PIN7, OUTPUT);
 
     digitalWrite(RelayM1_PIN5, HIGH);
     digitalWrite(RelayM1_PIN6, HIGH);
+    digitalWrite(RelayM1_PIN7, HIGH);
 }
 
 void stopLift() {
@@ -60,25 +64,22 @@ void loop() {
   bool hit_top = (digitalRead(limitSWFPin) == LOW);
   bool hit_bottom = (digitalRead(limitSWBPin) == LOW);
 
-  // 2. จัดการสถานะมอเตอร์
   if (motorState == 'U' || motorState == 'u' || motorState == 'O' || motorState == 'o') {
-    // โหมดหมุนขึ้น (ทั้ง Manual และ Auto)
     if (!hit_top) {
       int speed = (motorState == 'U' || motorState == 'O') ? speed_fast : speed_slow;
       ledcWrite(pwmChannelA, speed);
       ledcWrite(pwmChannelB, 0);
     } else {
-      stopLift(); // ชนแล้วหยุด และเซต motorState = 'S'
+      stopLift();
     }
   } 
   else if (motorState == 'D' || motorState == 'd' || motorState == 'C' || motorState == 'c') {
-    // โหมดหมุนลง (ทั้ง Manual และ Auto)
     if (!hit_bottom) {
       int speed = (motorState == 'D' || motorState == 'C') ? speed_fast : speed_slow;
       ledcWrite(pwmChannelA, 0);
       ledcWrite(pwmChannelB, speed);
     } else {
-      stopLift(); // ชนแล้วหยุด และเซต motorState = 'S'
+      stopLift();
     }
   } 
   else {
